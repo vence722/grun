@@ -11,7 +11,9 @@ type catcher struct{
 }
 
 func (this catcher) Catch(f func (error)) {
-	f(this.err)
+	if this.err != nil {
+		f(this.err)
+	}
 }
 
 func Run(f func (TryFunc)) (c Catchable) {

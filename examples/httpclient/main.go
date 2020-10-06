@@ -14,8 +14,6 @@ func main() {
 		data := try(ioutil.ReadAll(conn.Body))[0].([]byte)
 		fmt.Println("response:", string(data))
 	}).Catch(func(err error) {
-		if err != nil {
-			log.Fatal(err)
-		}
+		log.Fatal("unexpected errors:", err)
 	})
 }
