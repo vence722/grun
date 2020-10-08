@@ -1,6 +1,6 @@
 package grun
 
-type TryFunc func(args ...interface{}) []interface{}
+type HandleErrFunc func(err error)
 
 type Catchable interface {
 	Catch(f func (error))
@@ -16,23 +16,16 @@ func (this catcher) Catch(f func (error)) {
 	}
 }
 
-func Run(f func (TryFunc)) (c Catchable) {
+func Run(f func (HandleErrFunc)) (c Catchable) {
 	defer func() {
 		if err := recover(); err != nil {
 			c = catcher{err.(error)}
 		}
 	}()
-	f(func(args ...interface{}) []interface{} {
-		var errObj error = nil
-		lastArg := args[len(args)-1]
-		switch lastArg.(type){
-		case error:
-			errObj = lastArg.(error)
+	f(func(err error) {
+		if err != nil {
+			panic(err)
 		}
-		if errObj != nil {
-			panic(errObj)
-		}
-		return args
 	})
 	return catcher{}
 }

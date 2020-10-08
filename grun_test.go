@@ -15,23 +15,37 @@ func testFunc(input1 int, input2 float64) (int, float64, error) {
 }
 
 func TestRun(t *testing.T) {
-	Run(func(try TryFunc) {
+	// run code without error
+	Run(func(handleErr HandleErrFunc) {
+		_, _, err := testFunc(1, 1)
+		handleErr(err)
+	}).Catch(func(err error) {
+		// if error is caught, test fails
+		t.FailNow()
+	})
+
+	// run code with error caught
+	Run(func(handleErr HandleErrFunc) {
 		// testFunc should return params successfully
-		res := try(testFunc(1, 1))
-		if len(res) != 3 || res[0] != 1 || res[1] != 1.0 {
-			t.Error(res)
+		resInt, resFloat, err := testFunc(1, 1)
+		handleErr(err)
+		if resInt != 1 || resFloat != 1.0 {
 			t.FailNow()
 		}
+
 		// testFunc should return params successfully
-		res = try(testFunc(2, 5))
-		if len(res) != 3 || res[0] != 2 || res[1] != 5.0 {
-			t.Error(res)
+		resInt, resFloat, err = testFunc(2, 5)
+		handleErr(err)
+		if resInt != 2 || resFloat != 5.0 {
 			t.FailNow()
 		}
+
 		// testFunc should throw error and go to catch block
-		res = try(testFunc(4, 5))
-		// should not come to here
-		t.Error(res)
+		resInt, resFloat, err = testFunc(4, 5)
+		handleErr(err)
+
+		// following code should not be executed
+		testFunc(5, 5)
 		t.FailNow()
 	}).Catch(func(err error) {
 		if err.Error() != "error input: input1=4, input2=5.000000" {
