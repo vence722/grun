@@ -3,7 +3,6 @@ package grun
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"testing"
 )
 
@@ -62,7 +61,6 @@ func TestRun(t *testing.T) {
 		b := 0
 		fmt.Println(a / b)
 	}).Catch(func(err CaughtError) {
-		fmt.Println(reflect.TypeOf(err.Panic))
 		if err.Name != ErrorNamePanic || err.Panic == nil || fmt.Sprintf("%s", err.Panic) != "runtime error: integer divide by zero" {
 			t.FailNow()
 		}
