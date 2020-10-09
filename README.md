@@ -3,7 +3,7 @@
 ### A go library helps developer to handle errors gracefully.
 
 ## Use cases
-When your go program becomes long, there should be cases that you need to handle a lot of errors within a function. 
+When your go program becomes long, there should be some cases that you need to handle a lot of errors within a function. 
 
 For example:
 ```go
