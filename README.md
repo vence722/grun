@@ -33,12 +33,12 @@ func makeHttpRequest(url string) error {
 With `grun`, the code would become prettier:
 
 ```go
-grun.Run(func(handleErr grun.HandleErrFunc) {
+grun.Run(func(throw grun.ThrowFunc) {
     resp, err := http.Get("https://www.google.com")
-    handleErr("httpGet", err)
+    throw("httpGet", err)
 
     data, err := ioutil.ReadAll(resp.Body)
-    handleErr("readBody", err)
+    throw("readBody", err)
 
     fmt.Println(string(data))
 }).Catch(func(caughtError grun.CaughtError) {
@@ -57,7 +57,7 @@ With `grun` you code can handle all the errors within the function in a centrali
 
 ### `Run` function
 
-### `HandleErrFunc` function
+### `ThrowFunc` function
 
 ### `Catch` function
 

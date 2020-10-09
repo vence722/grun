@@ -9,7 +9,7 @@ type CaughtError struct {
 	Err error
 }
 
-type HandleErrFunc func(name string, err error)
+type ThrowFunc func(name string, err error)
 
 type Catchable interface {
 	Catch(f func (CaughtError))
@@ -25,7 +25,7 @@ func (this catcher) Catch(f func (caughtError CaughtError)) {
 	}
 }
 
-func Run(f func (HandleErrFunc)) (c Catchable) {
+func Run(f func (ThrowFunc)) (c Catchable) {
 	defer func() {
 		if err := recover(); err != nil {
 			c = catcher{caughtError: err.(CaughtError)}
