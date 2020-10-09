@@ -3,6 +3,7 @@ package grun
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -51,6 +52,18 @@ func TestRun(t *testing.T) {
 	}).Catch(func(err CaughtError) {
 		if err.Name != "testFunc(4, 5)" || err.Err.Error() != "error input: input1=4, input2=5.000000" {
 			t.Error(err)
+			t.FailNow()
+		}
+	})
+
+	// run code with panic
+	Run(func(throwFunc ThrowFunc) {
+		a := 1
+		b := 0
+		fmt.Println(a / b)
+	}).Catch(func(err CaughtError) {
+		fmt.Println(reflect.TypeOf(err.Panic))
+		if err.Name != ErrorNamePanic || err.Panic == nil || fmt.Sprintf("%s", err.Panic) != "runtime error: integer divide by zero" {
 			t.FailNow()
 		}
 	})

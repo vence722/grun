@@ -1,5 +1,9 @@
 package grun
 
+const (
+	ErrorNamePanic = "panic"
+)
+
 var (
 	ErrorNone = CaughtError{}
 )
@@ -7,6 +11,7 @@ var (
 type CaughtError struct {
 	Name string
 	Err error
+	Panic interface{}
 }
 
 type ThrowFunc func(name string, err error)
@@ -28,7 +33,11 @@ func (this catcher) Catch(f func (caughtError CaughtError)) {
 func Run(f func (ThrowFunc)) (c Catchable) {
 	defer func() {
 		if err := recover(); err != nil {
-			c = catcher{caughtError: err.(CaughtError)}
+			if caughtErr, ok := err.(CaughtError); ok {
+				c = catcher{caughtError: caughtErr}
+			} else {
+				c = catcher{caughtError: CaughtError{Name: ErrorNamePanic, Panic: err}}
+			}
 		}
 	}()
 	f(func(name string, err error) {
