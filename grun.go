@@ -1,30 +1,39 @@
 package grun
 
-type HandleErrFunc func(err error)
+var (
+	ErrorNone = CaughtError{}
+)
+
+type CaughtError struct {
+	Name string
+	Err error
+}
+
+type HandleErrFunc func(name string, err error)
 
 type Catchable interface {
-	Catch(f func (error))
+	Catch(f func (CaughtError))
 }
 
 type catcher struct{
-	err error
+	caughtError CaughtError
 }
 
-func (this catcher) Catch(f func (error)) {
-	if this.err != nil {
-		f(this.err)
+func (this catcher) Catch(f func (caughtError CaughtError)) {
+	if this.caughtError != ErrorNone {
+		f(this.caughtError)
 	}
 }
 
 func Run(f func (HandleErrFunc)) (c Catchable) {
 	defer func() {
 		if err := recover(); err != nil {
-			c = catcher{err.(error)}
+			c = catcher{caughtError: err.(CaughtError)}
 		}
 	}()
-	f(func(err error) {
+	f(func(name string, err error) {
 		if err != nil {
-			panic(err)
+			panic(CaughtError{Name: name, Err: err})
 		}
 	})
 	return catcher{}
