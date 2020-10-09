@@ -2,7 +2,35 @@
 
 ### A go library helps developer to handle errors gracefully.
 
-## Example
+## Use cases
+When your go program becomes long, there should be cases that you need to handle a lot of errors within a function. 
+
+For example:
+```go
+func makeHttpRequest(url string) error {
+    resp, err := http.Get(url)
+    if err != nil {
+        // handle error for http.Get
+    }
+
+    data, err := ioutil.ReadAll(resp)
+    if err != nil {
+        // handle error for ioutil.ReadAll
+    }
+
+    err := processData(data)
+    if err != nil {
+        // handle error for processData
+    }
+    
+    // Doing other things, which may generate other errors.
+    // You need to handle them one by one.
+
+    return nil
+}
+```
+
+With `grun`, the code would become prettier:
 
 ```go
 grun.Run(func(handleErr grun.HandleErrFunc) {
@@ -22,3 +50,15 @@ grun.Run(func(handleErr grun.HandleErrFunc) {
     }
 })
 ```
+
+With `grun` you code can handle all the errors within the function in a centralised place.
+
+## API
+
+### `Run` function
+
+### `HandleErrFunc` function
+
+### `Catch` function
+
+### `CaughtError` struct
